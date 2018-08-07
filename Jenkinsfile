@@ -4,6 +4,8 @@
  * "Sonatype" is a trademark of Sonatype, Inc.
  */
 @Library(['ci-pipeline-library', 'jenkins-shared']) _
+import com.sonatype.jenkins.pipeline.GitHub
+import com.sonatype.jenkins.pipeline.OsTools
 
 String apiToken = null
 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'integrations-github-api',
