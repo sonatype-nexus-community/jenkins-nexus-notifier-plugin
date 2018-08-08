@@ -19,5 +19,4 @@ def typedDescriptor = (NotifierConfiguration) descriptor
 
 f.section(title: typedDescriptor.displayName) {
 
-  
 }
