@@ -10,14 +10,16 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.ci.config.NotifierConfiguration
+package org.sonatype.nexus.ci.util
 
-import org.sonatype.nexus.ci.config.NotifierConfiguration
+import hudson.util.FormValidation
 
-def f = namespace(lib.FormTagLib)
-def typedDescriptor = (NotifierConfiguration) descriptor
-
-f.section(title: typedDescriptor.displayName) {
-
-  
+class FormUtil
+{
+  static FormValidation validateNotEmpty(String value, String error) {
+    if (!value) {
+      return FormValidation.error(error)
+    }
+    return FormValidation.ok()
+  }
 }
