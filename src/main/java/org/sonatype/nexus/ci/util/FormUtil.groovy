@@ -12,14 +12,57 @@
  */
 package org.sonatype.nexus.ci.util
 
+import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials
+import com.cloudbees.plugins.credentials.common.StandardCredentials
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials
+import hudson.security.ACL
 import hudson.util.FormValidation
+import hudson.util.ListBoxModel
+import jenkins.model.Jenkins
+
+import static com.cloudbees.plugins.credentials.CredentialsMatchers.anyOf
+import static com.cloudbees.plugins.credentials.CredentialsMatchers.instanceOf
+import static com.cloudbees.plugins.credentials.domains.URIRequirementBuilder.fromUri
 
 class FormUtil
 {
+  static FormValidation validateUrl(String url) {
+    try {
+      if (url) {
+        new URL(url)
+      }
+
+      return FormValidation.ok()
+    }
+    catch (MalformedURLException e) {
+      return FormValidation.error('Malformed url (%s)', e.getMessage())
+    }
+  }
+
   static FormValidation validateNotEmpty(String value, String error) {
     if (!value) {
       return FormValidation.error(error)
     }
     return FormValidation.ok()
+  }
+
+  static ListBoxModel newCredentialsItemsListBoxModel(final String serverUrl,
+                                                      final String credentialsId)
+  {
+    // Ref: https://github.com/jenkinsci/credentials-plugin/blob/master/docs/consumer.adoc
+    boolean notAdmin = !Jenkins.get().hasPermission(Jenkins.ADMINISTER)
+
+    if (notAdmin) {
+      return new StandardListBoxModel().includeCurrentValue(credentialsId)
+    }
+
+    return new StandardListBoxModel()
+        .includeEmptyValue()
+        .includeMatchingAs(ACL.SYSTEM,
+        Jenkins.get(),
+        StandardCredentials,
+        fromUri(serverUrl).build(),
+        anyOf(instanceOf(StandardUsernamePasswordCredentials), instanceOf(StandardCertificateCredentials)))
   }
 }

@@ -10,27 +10,22 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.ci.config
+package org.sonatype.nexus.ci.config.NotifierConfiguration
 
-import hudson.Extension
-import jenkins.model.GlobalConfiguration
-import org.kohsuke.stapler.DataBoundConstructor
+import org.sonatype.nexus.ci.config.BitbucketConfiguration
+import org.sonatype.nexus.ci.config.Messages
 
-@Extension
-class NotifierConfiguration
-    extends GlobalConfiguration
-{
-  List<BitbucketConfiguration> bitbucketConfigs
+def f = namespace(lib.FormTagLib)
+def c = namespace(lib.CredentialsTagLib)
 
-  NotifierConfiguration() {}
+def typedDescriptor = (BitbucketConfiguration.DescriptorImpl) descriptor
 
-  @DataBoundConstructor
-  NotifierConfiguration(final List<BitbucketConfiguration> bitbucketConfigs) {
-    this.bitbucketConfigs = bitbucketConfigs ?: []
+f.section(title: typedDescriptor.displayName) {
+  f.entry(title: _(Messages.Configuration_ServerUrl()), field: 'serverUrl') {
+    f.textbox(clazz: 'required')
   }
 
-  @Override
-  String getDisplayName() {
-    return Messages.NotifierConfiguration_DisplayName()
+  f.entry(title: _(Messages.Configuration_Credentials()), field: 'credentialsId') {
+    c.select(context: app, includeUser: false, expressionAllowed: false)
   }
 }

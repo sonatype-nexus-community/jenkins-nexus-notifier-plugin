@@ -12,11 +12,18 @@
  */
 package org.sonatype.nexus.ci.config.NotifierConfiguration
 
+import org.sonatype.nexus.ci.config.Messages
 import org.sonatype.nexus.ci.config.NotifierConfiguration
 
 def f = namespace(lib.FormTagLib)
 def typedDescriptor = (NotifierConfiguration) descriptor
 
 f.section(title: typedDescriptor.displayName) {
-
+  f.entry(title: _(Messages.NotifierConfiguration_BitbucketServer())) {
+    f.repeatableHeteroProperty(
+        field: 'bitbucketConfigs',
+        addCaption: _(Messages.NotifierConfiguration_AddBitbucketServer()),
+        oneEach: 'true'
+    )
+  }
 }
