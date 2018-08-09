@@ -15,7 +15,8 @@ package org.sonatype.nexus.ci.jenkins.notifier.BitbucketNotification
 import org.sonatype.nexus.ci.jenkins.notifier.BitbucketNotification
 
 def f = namespace(lib.FormTagLib)
-def typedDescriptor = (BitbucketNotification.DescriptorImpl) descriptor
+def c = namespace(lib.CredentialsTagLib)
+def typedDescriptor = (BitbucketNotifierStep.DescriptorImpl) descriptor
 
 f.section(title: typedDescriptor.displayName) {
   f.entry(title: _('Send Bitbucket Notification'), field: 'sendBitbucketNotification') {
@@ -32,5 +33,12 @@ f.section(title: typedDescriptor.displayName) {
 
   f.entry(title: _('Bitbucket Commit Hash'), field: 'commitHash') {
     f.textbox(clazz: 'required')
+  }
+  f.advanced() {
+    f.section(title: _('Advanced options')) {
+      f.entry(title: _('Use job specific credentials'), field: 'jobCredentialsId') {
+        c.select(context:app, includeUser:false, expressionAllowed:false)
+      }
+    }
   }
 }

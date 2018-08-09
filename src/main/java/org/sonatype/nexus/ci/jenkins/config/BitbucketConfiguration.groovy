@@ -27,8 +27,8 @@ import org.kohsuke.stapler.QueryParameter
 class BitbucketConfiguration
     implements Describable<BitbucketConfiguration>
 {
-  String serverUrl
-  String credentialsId
+  public static String serverUrl
+  public static String credentialsId
 
   @DataBoundConstructor
   BitbucketConfiguration(final String serverUrl, final String credentialsId) {

@@ -18,6 +18,7 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -27,9 +28,14 @@ public class BitbucketNotification
     implements Describable<BitbucketNotification>
 {
   private boolean sendBitbucketNotification;
+
   private String projectKey;
+
   private String repositorySlug;
+
   private String commitHash;
+
+  private String jobCredentialsId;
 
   public boolean getSendBitbucketNotification() {
     return sendBitbucketNotification;
@@ -47,14 +53,19 @@ public class BitbucketNotification
     return commitHash;
   }
 
+  public String getJobCredentialsId() {
+    return jobCredentialsId;
+  }
+
   @DataBoundConstructor
   public BitbucketNotification(final boolean sendBitbucketNotification, final String projectKey,
-                               final String repositorySlug, final String commitHash)
+                               final String repositorySlug, final String commitHash, final String jobCredentialsId)
   {
     this.sendBitbucketNotification = sendBitbucketNotification;
     this.projectKey = projectKey;
     this.repositorySlug = repositorySlug;
     this.commitHash = commitHash;
+    this.jobCredentialsId = jobCredentialsId;
   }
 
   @Override
@@ -82,6 +93,11 @@ public class BitbucketNotification
 
     public FormValidation doCheckCommitHash(@QueryParameter String commitHash) {
       return FormUtil.validateNotEmpty(commitHash, Messages.BitbucketNotification_CommitHashRequired());
+    }
+
+    public ListBoxModel doFillJobCredentialsIdItems() {
+      return FormUtil
+          .newCredentialsItemsListBoxModel(BitbucketConfiguration.serverUrl, BitbucketConfiguration.credentialsId);
     }
   }
 }
