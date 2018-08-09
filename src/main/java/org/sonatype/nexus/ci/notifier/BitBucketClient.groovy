@@ -33,10 +33,13 @@ class BitBucketClient
 
   String password
 
+  HttpClient http
+
   BitBucketClient(String serverUrl, String username, String password) {
     this.serverUrl = serverUrl
     this.username = username
     this.password = password
+    this.http = new HttpClient()
   }
 
   def putCard(PolicyEvaluationResult result) {
@@ -44,54 +47,60 @@ class BitBucketClient
         result.critical, result.severe, result.moderate, result.reportUrl)
   }
 
-  def putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate,
-              reportUrl)
-  {
-    def http = new HTTPBuilder(
-        "http://${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +
-            "${commitHash}/cards/NEXUS")
-    return http.request(Method.PUT, JSON) {
-      req ->
-        body = [
-            data: [
-                [
-                    title: 'Components Affected',
-                    value: componentsAffected
-                ],
-                [
-                    title: 'Critical',
-                    value: critical
-                ],
-                [
-                    title: 'Severe',
-                    value: severe
-                ],
-                [
-                    title: 'Moderate',
-                    value: moderate
-                ],
-                [
-                    title: 'View full report',
-                    type : 'LINK',
-                    value: [
-                        linktext: 'Report',
-                        href    : reportUrl
-                    ]
-                ]
-            ],
-            details    : buildStatus == BuildStatus.FAIL ? 'Nexus Platform Plugin found policy violations.' : 'Success!',
-            title      : buildStatus == BuildStatus.FAIL ? 'Policy Violations Found' : 'No Policy Violations Found',
-            vendor     : 'Nexus Jenkins Notifier',
-            createdDate: System.currentTimeMillis(),
-            link       : VENDOR_LINK,
-            logoUrl    : LOGO_URL,
-            result     : buildStatus
-        ]
+  def putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate, reportUrl) {
+    def url = getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash)
+    def body = getPutCardRequestBody(componentsAffected, critical, severe, moderate, buildStatus, reportUrl)
+    def headers = getRequestHeaders(username, password)
+    return http.putCard(url, body, headers)
+  }
 
-        headers = [
-            'User-Agent' : USER_AGENT,
-            Authorization: 'Basic ' + ("${username}:${password}").bytes.encodeBase64()
+  def getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash) {
+    return "${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +
+        "${commitHash}/cards/NEXUS"
+  }
+
+  def getRequestHeaders(username, password) {
+    return [
+      'User-Agent' : USER_AGENT,
+      Authorization: 'Basic ' + ("${username}:${password}").bytes.encodeBase64()
+    ]
+  }
+
+  def getPutCardRequestBody(componentsAffected, critical, severe, moderate, buildStatus, reportUrl) {
+    return [
+      data: [
+        [
+          title: 'Components Affected',
+          value: componentsAffected
+        ],
+        [
+          title: 'Critical',
+          value: critical
+        ],
+        [
+          title: 'Severe',
+          value: severe
+        ],
+        [
+          title: 'Moderate',
+          value: moderate
+        ],
+        [
+          title: 'View full report',
+          type : 'LINK',
+          value: [
+            linktext: 'Report',
+            href    : reportUrl
+          ]
         ]
-    }
+      ],
+      details    : buildStatus == BuildStatus.FAIL ? 'Nexus Platform Plugin found policy violations.' : 'Success!',
+      title      : buildStatus == BuildStatus.FAIL ? 'Policy Violations Found' : 'No Policy Violations Found',
+      vendor     : 'Nexus Jenkins Notifier',
+      createdDate: System.currentTimeMillis(),
+      link       : VENDOR_LINK,
+      logoUrl    : LOGO_URL,
+      result     : buildStatus
+    ]
   }
 }
