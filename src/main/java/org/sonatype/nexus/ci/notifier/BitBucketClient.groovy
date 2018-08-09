@@ -1,5 +1,7 @@
 package org.sonatype.nexus.ci.notifier
 
+import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
+
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 
@@ -65,8 +67,8 @@ class BitBucketClient
                     ]
                 ]
             ],
-            details    : 'Nexus Plaform Plugin found policy violations.',
-            title      : 'Policy Violations Found',
+            details    : buildStatus == BuildStatus.FAIL ? 'Nexus Platform Plugin found policy violations.' : 'Success!',
+            title      : buildStatus == BuildStatus.FAIL ? 'Policy Violations Found' : 'No Policy Violations Found',
             vendor     : 'Nexus Jenkins Notifier',
             createdDate: System.currentTimeMillis(),
             link       : VENDOR_LINK,
