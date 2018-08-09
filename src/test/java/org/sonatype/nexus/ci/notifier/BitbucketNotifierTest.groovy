@@ -35,7 +35,7 @@ class BitbucketNotifierTest
     when:
       def run = Mock(Run)
       run.getActions() >> new ArrayList<Action>()
-      bitbucketNotifier.send(run, null)
+      bitbucketNotifier.send(run, '', '', '', null)
 
     then:
       AbortException ex = thrown()
@@ -48,7 +48,7 @@ class BitbucketNotifierTest
     when:
       def run = Mock(Run)
       run.getActions() >> new ArrayList<Action>()
-      bitbucketNotifier.send(run, new Object())
+      bitbucketNotifier.send(run, '', '', '', new Object())
 
     then:
       AbortException ex = thrown()
