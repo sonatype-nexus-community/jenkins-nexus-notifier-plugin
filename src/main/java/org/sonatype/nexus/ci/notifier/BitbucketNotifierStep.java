@@ -79,7 +79,7 @@ public class BitbucketNotifierStep
                @Nonnull final Launcher launcher,
                @Nonnull final TaskListener listener)
   {
-    new BitbucketNotifier(listener).send(run, applicationPolicyEvaluation);
+    new BitbucketNotifier(listener).send(run, projectKey, repositorySlug, commitHash, applicationPolicyEvaluation);
   }
 
   @Extension

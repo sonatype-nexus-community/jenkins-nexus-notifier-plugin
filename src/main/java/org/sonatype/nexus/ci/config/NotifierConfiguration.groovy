@@ -12,9 +12,14 @@
  */
 package org.sonatype.nexus.ci.config
 
+import javax.annotation.Nullable
+
 import hudson.Extension
+import hudson.model.Descriptor
 import jenkins.model.GlobalConfiguration
+import net.sf.json.JSONObject
 import org.kohsuke.stapler.DataBoundConstructor
+import org.kohsuke.stapler.StaplerRequest
 
 @Extension
 class NotifierConfiguration
@@ -22,7 +27,9 @@ class NotifierConfiguration
 {
   List<BitbucketConfiguration> bitbucketConfigs
 
-  NotifierConfiguration() {}
+  NotifierConfiguration() {
+    load()
+  }
 
   @DataBoundConstructor
   NotifierConfiguration(final List<BitbucketConfiguration> bitbucketConfigs) {
@@ -30,7 +37,19 @@ class NotifierConfiguration
   }
 
   @Override
+  boolean configure(final StaplerRequest req, final JSONObject json) throws Descriptor.FormException {
+    def notifierConfiguration = req.bindJSON(NotifierConfiguration, json)
+    this.bitbucketConfigs = notifierConfiguration.bitbucketConfigs
+    save()
+    return true
+  }
+
+  @Override
   String getDisplayName() {
     return Messages.NotifierConfiguration_DisplayName()
+  }
+
+  static @Nullable NotifierConfiguration getNotifierConfiguration() {
+    return (NotifierConfiguration) all().get(NotifierConfiguration)
   }
 }
