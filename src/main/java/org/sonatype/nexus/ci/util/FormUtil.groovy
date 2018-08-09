@@ -12,7 +12,6 @@
  */
 package org.sonatype.nexus.ci.util
 
-import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials
 import com.cloudbees.plugins.credentials.common.StandardCredentials
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials
@@ -63,6 +62,6 @@ class FormUtil
         Jenkins.get(),
         StandardCredentials,
         fromUri(serverUrl).build(),
-        anyOf(instanceOf(StandardUsernamePasswordCredentials), instanceOf(StandardCertificateCredentials)))
+        anyOf(instanceOf(StandardUsernamePasswordCredentials)))
   }
 }
