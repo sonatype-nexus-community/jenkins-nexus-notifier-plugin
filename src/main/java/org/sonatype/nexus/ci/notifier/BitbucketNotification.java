@@ -12,34 +12,28 @@
  */
 package org.sonatype.nexus.ci.notifier;
 
-import javax.annotation.Nonnull;
-
 import org.sonatype.nexus.ci.util.FormUtil;
 
 import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Notifier;
-import hudson.tasks.Publisher;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import jenkins.tasks.SimpleBuildStep;
+import jenkins.model.Jenkins;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-public class BitbucketNotifierStep
-    extends Notifier
-    implements SimpleBuildStep
+public class BitbucketNotification
+    implements Describable<BitbucketNotification>
 {
+  private boolean sendBitbucketNotification;
   private String projectKey;
   private String repositorySlug;
   private String commitHash;
-  private Object applicationPolicyEvaluation;
+
+  public boolean getSendBitbucketNotification() {
+    return sendBitbucketNotification;
+  }
 
   public String getProjectKey() {
     return projectKey;
@@ -53,48 +47,29 @@ public class BitbucketNotifierStep
     return commitHash;
   }
 
-  @DataBoundSetter
-  public void setApplicationPolicyEvaluation(final Object applicationPolicyEvaluation) {
-    this.applicationPolicyEvaluation = applicationPolicyEvaluation;
-  }
-
-  public Object getApplicationPolicyEvaluation() {
-    return applicationPolicyEvaluation;
-  }
-
   @DataBoundConstructor
-  public BitbucketNotifierStep(
-      final String projectKey,
-      final String repositorySlug,
-      final String commitHash)
+  public BitbucketNotification(final boolean sendBitbucketNotification, final String projectKey,
+                               final String repositorySlug, final String commitHash)
   {
+    this.sendBitbucketNotification = sendBitbucketNotification;
     this.projectKey = projectKey;
     this.repositorySlug = repositorySlug;
     this.commitHash = commitHash;
   }
 
   @Override
-  public void perform(@Nonnull final Run run,
-               @Nonnull final FilePath workspace,
-               @Nonnull final Launcher launcher,
-               @Nonnull final TaskListener listener)
-  {
-    new BitbucketNotifier(listener).send(run, projectKey, repositorySlug, commitHash, applicationPolicyEvaluation);
+  public Descriptor<BitbucketNotification> getDescriptor() {
+    return Jenkins.get().getDescriptorOrDie(this.getClass());
   }
 
   @Extension
-  @Symbol("nexusIqBitbucketNotifier")
+  @Symbol("nexusBitbucketNotification")
   public static final class DescriptorImpl
-      extends BuildStepDescriptor<Publisher>
+      extends Descriptor<BitbucketNotification>
   {
     @Override
-    public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
-      return true;
-    }
-
-    @Override
     public String getDisplayName() {
-      return Messages.BitbucketNotifierStep_DisplayName();
+      return Messages.BitbucketNotification_DisplayName();
     }
 
     public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {

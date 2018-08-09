@@ -14,13 +14,10 @@ package org.sonatype.nexus.ci.notifier
 
 import javax.annotation.Nonnull
 
-import org.sonatype.nexus.ci.model.ApplicationPolicyEvaluation
 import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction
 import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
 
 import hudson.AbortException
-import hudson.model.Result
-import hudson.model.Run
 import hudson.model.TaskListener
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -33,32 +30,18 @@ class BitbucketNotifier
     this.logger = listener.logger
   }
 
-  void send(@Nonnull final Run run,
-            final String projectKey,
-            final String repositorySlug,
-            final String commitHash,
-            final Object applicationPolicyEvaluation)
+  void send(final boolean buildPassing,
+            final BitbucketNotification bitbucketNotification,
+            final PolicyEvaluationHealthAction policyEvaluationHealthAction)
   {
-    checkArgument(projectKey != null, Messages.BitbucketNotifier_NoProjectKey())
-    checkArgument(repositorySlug != null, Messages.BitbucketNotifier_NoRepositorySlug())
-    checkArgument(commitHash != null, Messages.BitbucketNotifier_NoCommitHash())
+    checkArgument(bitbucketNotification.projectKey != null, Messages.BitbucketNotifier_NoProjectKey())
+    checkArgument(bitbucketNotification.repositorySlug != null, Messages.BitbucketNotifier_NoRepositorySlug())
+    checkArgument(bitbucketNotification.commitHash != null, Messages.BitbucketNotifier_NoCommitHash())
 
-    def policyEvaluationHealthAction = run.getAllActions().find({ action ->
-      PolicyEvaluationHealthAction.assignableFrom(action)
-    })
-    if (!policyEvaluationHealthAction && !applicationPolicyEvaluation) {
-      logger.println(Messages.BitbucketNotifierStep_NoPolicyAction())
-      throw new AbortException(Messages.BitbucketNotifierStep_NoPolicyAction())
-    }
-    if (applicationPolicyEvaluation && !ApplicationPolicyEvaluation.assignableFrom(applicationPolicyEvaluation)) {
-      logger.println(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
-      throw new AbortException(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
-    }
-
-    def buildPassing = run.result == Result.SUCCESS
 
     def client = BitbucketClientFactory.bitbucketClient
-    sendPolicyEvaluationHealthAction(client, projectKey, repositorySlug, commitHash, buildPassing,
+    sendPolicyEvaluationHealthAction(client, bitbucketNotification.projectKey, bitbucketNotification.repositorySlug,
+        bitbucketNotification.commitHash, buildPassing,
         PolicyEvaluationHealthAction.build(policyEvaluationHealthAction))
   }
 

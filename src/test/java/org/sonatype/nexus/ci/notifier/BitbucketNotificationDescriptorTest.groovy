@@ -15,10 +15,10 @@ package org.sonatype.nexus.ci.notifier
 import hudson.util.FormValidation.Kind
 import spock.lang.Specification
 
-class BitbucketNotifierDescriptorTest
+class BitbucketNotificationDescriptorTest
     extends Specification
 {
-  BitbucketNotifierStep.DescriptorImpl descriptor = new BitbucketNotifierStep.DescriptorImpl()
+  BitbucketNotification.DescriptorImpl descriptor = new BitbucketNotification.DescriptorImpl()
 
   def 'it validates project key'() {
     when:
