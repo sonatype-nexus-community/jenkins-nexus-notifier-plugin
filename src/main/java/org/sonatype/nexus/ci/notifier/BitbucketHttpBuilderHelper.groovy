@@ -17,7 +17,7 @@ import groovyx.net.http.Method
 
 import static groovyx.net.http.ContentType.JSON
 
-class HttpClient
+class BitbucketHttpBuilderHelper
 {
   def putCard(url, requestBody, requestHeaders) {
     def http = new HTTPBuilder(url)

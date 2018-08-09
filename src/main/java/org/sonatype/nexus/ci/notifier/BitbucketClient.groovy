@@ -14,11 +14,6 @@ package org.sonatype.nexus.ci.notifier
 
 import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
 
-import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method
-
-import static groovyx.net.http.ContentType.JSON
-
 class BitbucketClient
 {
   static String VENDOR_LINK = 'https://www.sonatype.com'
@@ -33,13 +28,13 @@ class BitbucketClient
 
   String password
 
-  HttpClient http
+  BitbucketHttpBuilderHelper http
 
   BitbucketClient(URI serverUrl, String username, String password) {
     this.serverUrl = serverUrl
     this.username = username
     this.password = password
-    this.http = new HttpClient()
+    this.http = new BitbucketHttpBuilderHelper()
   }
 
   def putCard(PolicyEvaluationResult result) {

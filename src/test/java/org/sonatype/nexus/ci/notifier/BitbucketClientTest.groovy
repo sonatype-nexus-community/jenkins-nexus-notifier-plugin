@@ -26,7 +26,7 @@ class BitbucketClientTest
   def client
 
   def setup() {
-    http = Mock(HttpClient)
+    http = Mock(BitbucketHttpBuilderHelper)
     client = new BitbucketClient(new URI('https://bitbucket:7990'), 'username', 'password')
     client.http = http
   }
