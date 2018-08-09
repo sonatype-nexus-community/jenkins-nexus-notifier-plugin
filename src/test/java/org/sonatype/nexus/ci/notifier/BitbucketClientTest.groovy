@@ -27,7 +27,7 @@ class BitbucketClientTest
 
   def setup() {
     http = Mock(HttpClient)
-    client = new BitBucketClient('https://bitbucket', 'username', 'password')
+    client = new BitbucketClient(new URI('https://bitbucket:7990'), 'username', 'password')
     client.http = http
   }
 
@@ -41,7 +41,7 @@ class BitbucketClientTest
       1 * http.putCard(_, _, _) >> { args -> url = args[0]}
 
     and:
-      url == 'https://bitbucket/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/cards/NEXUS'
+      url == 'https://bitbucket:7990/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/cards/NEXUS'
 
     where:
       result = getFailPolicyEvaluationResult()
@@ -77,8 +77,8 @@ class BitbucketClientTest
 
     where:
       result                             | details
-      getSuccessPolicyEvaluationResult() | 'No Policy Violations Found'
-      getFailPolicyEvaluationResult()    | 'Policy Violations Found'
+      getSuccessPolicyEvaluationResult() | 'Success!'
+      getFailPolicyEvaluationResult()    | 'Nexus Platform Plugin found policy violations.'
   }
 
   def 'put card has correct title'() {
@@ -185,7 +185,7 @@ class BitbucketClientTest
   @Ignore
   def 'creates card for real'() {
     setup:
-      def client = new BitBucketClient('localhost:7990', 'jcava', 'password')
+      def client = new BitbucketClient(new URI('http://localhost:7990'), 'jcava', 'password')
       def result = new PolicyEvaluationResult('int', 'mini-java-maven-app', '2ef71f840d1688b0eee0226c758456adccb66fd0',
           PASS, 5, 1, 2, 3,
           'https://policy.s/assets/index.html#/reports/webgoat/67a5be43062a40b8a739dc638b40bf91')

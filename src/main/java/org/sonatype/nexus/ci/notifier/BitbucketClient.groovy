@@ -19,7 +19,7 @@ import groovyx.net.http.Method
 
 import static groovyx.net.http.ContentType.JSON
 
-class BitBucketClient
+class BitbucketClient
 {
   static String VENDOR_LINK = 'https://www.sonatype.com'
 
@@ -27,7 +27,7 @@ class BitBucketClient
 
   static String LOGO_URL = 'https://avatars0.githubusercontent.com/u/44938?s=200&v=4'
 
-  String serverUrl
+  URI serverUrl
 
   String username
 
@@ -35,7 +35,7 @@ class BitBucketClient
 
   HttpClient http
 
-  BitBucketClient(String serverUrl, String username, String password) {
+  BitbucketClient(URI serverUrl, String username, String password) {
     this.serverUrl = serverUrl
     this.username = username
     this.password = password
