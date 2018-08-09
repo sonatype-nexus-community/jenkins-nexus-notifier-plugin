@@ -27,11 +27,11 @@ class BitBucketClient
 
   def putCard(PolicyEvaluationResult result) {
     putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus, result.componentsAffected,
-        result.critical, result.severe, result.moderate, result.reportUrl, result.success, result.failure)
+        result.critical, result.severe, result.moderate, result.reportUrl)
   }
 
   def putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate,
-              reportUrl, success, failure)
+              reportUrl)
   {
     def http = new HTTPBuilder(
         "http://${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +

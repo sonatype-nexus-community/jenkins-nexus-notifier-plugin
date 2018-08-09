@@ -24,13 +24,8 @@ class PolicyEvaluationResult
 
   String reportUrl
 
-  Closure success
-
-  Closure failure
-
   PolicyEvaluationResult(String projectKey, String repositorySlug, String commitHash, BuildStatus buildStatus,
-                         int componentsAffected, int critical, int severe, int moderate, String reportUrl,
-                         Closure success = null, Closure failure = null)
+                         int componentsAffected, int critical, int severe, int moderate, String reportUrl)
   {
     this.projectKey = projectKey
     this.repositorySlug = repositorySlug
@@ -41,7 +36,5 @@ class PolicyEvaluationResult
     this.severe = severe
     this.moderate = moderate
     this.reportUrl = reportUrl
-    this.success = success
-    this.failure = failure
   }
 }
