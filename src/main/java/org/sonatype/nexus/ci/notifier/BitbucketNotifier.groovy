@@ -19,6 +19,7 @@ import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction
 import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
 
 import hudson.AbortException
+import hudson.model.Result
 import hudson.model.Run
 import hudson.model.TaskListener
 
@@ -54,8 +55,10 @@ class BitbucketNotifier
       throw new AbortException(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
     }
 
+    def buildPassing = run.result == Result.SUCCESS
+
     def client = BitbucketClientFactory.bitbucketClient
-    sendPolicyEvaluationHealthAction(client, projectKey, repositorySlug, commitHash,
+    sendPolicyEvaluationHealthAction(client, projectKey, repositorySlug, commitHash, buildPassing,
         PolicyEvaluationHealthAction.build(policyEvaluationHealthAction))
   }
 
@@ -63,6 +66,7 @@ class BitbucketNotifier
                                                 final String projectKey,
                                                 final String repositorySlug,
                                                 final String commitHash,
+                                                final boolean buildPassing,
                                                 final PolicyEvaluationHealthAction policyEvaluationHealthAction)
   {
     try {
@@ -70,7 +74,7 @@ class BitbucketNotifier
           projectKey,
           repositorySlug,
           commitHash,
-          BuildStatus.PASS,
+          buildPassing ? BuildStatus.PASS : BuildStatus.FAIL,
           policyEvaluationHealthAction.affectedComponentCount,
           policyEvaluationHealthAction.criticalComponentCount,
           policyEvaluationHealthAction.severeComponentCount,
