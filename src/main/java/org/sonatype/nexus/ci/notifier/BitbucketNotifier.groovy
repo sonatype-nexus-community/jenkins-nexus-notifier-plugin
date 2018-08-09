@@ -16,22 +16,32 @@ import javax.annotation.Nonnull
 
 import org.sonatype.nexus.ci.model.ApplicationPolicyEvaluation
 import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction
+import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
 
 import hudson.AbortException
 import hudson.model.Run
 import hudson.model.TaskListener
 
+import static com.google.common.base.Preconditions.checkArgument
+
 class BitbucketNotifier
 {
-  final TaskListener listener
+  final PrintStream logger
 
   BitbucketNotifier(@Nonnull final TaskListener listener) {
-    this.listener = listener
+    this.logger = listener.logger
   }
 
-  void send(@Nonnull final Run run, final Object applicationPolicyEvaluation)
+  void send(@Nonnull final Run run,
+            final String projectKey,
+            final String repositorySlug,
+            final String commitHash,
+            final Object applicationPolicyEvaluation)
   {
-    def logger = listener.logger
+    checkArgument(projectKey != null, Messages.BitbucketNotifier_NoProjectKey())
+    checkArgument(repositorySlug != null, Messages.BitbucketNotifier_NoRepositorySlug())
+    checkArgument(commitHash != null, Messages.BitbucketNotifier_NoCommitHash())
+
     def policyEvaluationHealthAction = run.getAllActions().find({ action ->
       PolicyEvaluationHealthAction.assignableFrom(action)
     })
@@ -42,6 +52,34 @@ class BitbucketNotifier
     if (applicationPolicyEvaluation && !ApplicationPolicyEvaluation.assignableFrom(applicationPolicyEvaluation)) {
       logger.println(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
       throw new AbortException(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
+    }
+
+    def client = BitbucketClientFactory.bitbucketClient
+    sendPolicyEvaluationHealthAction(client, projectKey, repositorySlug, commitHash,
+        PolicyEvaluationHealthAction.build(policyEvaluationHealthAction))
+  }
+
+  private void sendPolicyEvaluationHealthAction(final BitBucketClient bitbucketClient,
+                                                final String projectKey,
+                                                final String repositorySlug,
+                                                final String commitHash,
+                                                final PolicyEvaluationHealthAction policyEvaluationHealthAction)
+  {
+    try {
+      bitbucketClient.putCard(new PolicyEvaluationResult(
+          projectKey,
+          repositorySlug,
+          commitHash,
+          BuildStatus.PASS,
+          policyEvaluationHealthAction.affectedComponentCount,
+          policyEvaluationHealthAction.criticalComponentCount,
+          policyEvaluationHealthAction.severeComponentCount,
+          policyEvaluationHealthAction.moderateComponentCount,
+          policyEvaluationHealthAction.reportLink
+      ))
+    } catch (ex) {
+      logger.println(ex.message)
+      throw new AbortException(ex.message)
     }
   }
 }

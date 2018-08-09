@@ -1,0 +1,8 @@
+com.sonatype.nexus.api.iq.ApplicationPolicyEvaluation
+groovyx.net.http.HttpResponseDecorator
+groovyx.net.http.HttpResponseException
+org.apache.http.impl.client.ClientParamsStack
+org.apache.http.message.BasicHttpResponse
+org.apache.http.message.BufferedHeader
+org.apache.http.message.HeaderGroup
+org.apache.http.util.CharArrayBuffer
