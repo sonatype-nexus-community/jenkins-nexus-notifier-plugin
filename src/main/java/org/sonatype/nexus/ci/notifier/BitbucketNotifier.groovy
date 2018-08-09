@@ -59,7 +59,7 @@ class BitbucketNotifier
         PolicyEvaluationHealthAction.build(policyEvaluationHealthAction))
   }
 
-  private void sendPolicyEvaluationHealthAction(final BitBucketClient bitbucketClient,
+  private void sendPolicyEvaluationHealthAction(final BitbucketClient bitbucketClient,
                                                 final String projectKey,
                                                 final String repositorySlug,
                                                 final String commitHash,
