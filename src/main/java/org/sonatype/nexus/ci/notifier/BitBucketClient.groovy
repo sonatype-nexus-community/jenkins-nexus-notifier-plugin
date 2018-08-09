@@ -34,7 +34,8 @@ class BitBucketClient
               reportUrl, success, failure)
   {
     def http = new HTTPBuilder(
-        "http://${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/${commitHash}/cards/NEXUS")
+        "http://${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +
+            "${commitHash}/cards/NEXUS")
     return http.request(Method.PUT, JSON) {
       req ->
         body = [
