@@ -12,6 +12,7 @@
  */
 package org.sonatype.nexus.ci.notifier
 
+import org.sonatype.nexus.ci.http.SonatypeHTTPBuilder
 import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
 
 class BitbucketClient
@@ -22,47 +23,47 @@ class BitbucketClient
 
   static String LOGO_URL = 'https://avatars0.githubusercontent.com/u/44938?s=200&v=4'
 
-  URI serverUrl
+  SonatypeHTTPBuilder http
+
+  String serverUrl
 
   String username
 
   String password
 
-  BitbucketHttpBuilderHelper http
-
-  BitbucketClient(URI serverUrl, String username, String password) {
+  BitbucketClient(String serverUrl, String username, String password) {
+    this.http = new SonatypeHTTPBuilder()
     this.serverUrl = serverUrl
     this.username = username
     this.password = password
-    this.http = new BitbucketHttpBuilderHelper()
   }
 
-  def putCard(PolicyEvaluationResult result) {
-    return putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus,
-        result.componentsAffected, result.critical, result.severe, result.moderate, result.reportUrl)
+  void putCard(PolicyEvaluationResult result) {
+    putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus, result.componentsAffected,
+        result.critical, result.severe, result.moderate, result.reportUrl)
   }
 
-  def putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate,
-              reportUrl) {
+  void putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate, reportUrl) {
     def url = getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash)
     def body = getPutCardRequestBody(componentsAffected, critical, severe, moderate, buildStatus, reportUrl)
     def headers = getRequestHeaders(username, password)
-    return http.putCard(url, body, headers)
+
+    http.put(url, body, headers)
   }
 
-  def getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash) {
+  String getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash) {
     return "${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +
         "${commitHash}/cards/NEXUS"
   }
 
-  def getRequestHeaders(username, password) {
+  Map getRequestHeaders(username, password) {
     return [
       'User-Agent' : USER_AGENT,
       Authorization: 'Basic ' + ("${username}:${password}").bytes.encodeBase64()
     ]
   }
 
-  def getPutCardRequestBody(componentsAffected, critical, severe, moderate, buildStatus, reportUrl) {
+  Map getPutCardRequestBody(componentsAffected, critical, severe, moderate, buildStatus, reportUrl) {
     return [
       data: [
         [

@@ -12,12 +12,14 @@
  */
 package org.sonatype.nexus.ci.notifier
 
-import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.PASS
-import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.FAIL
+import org.sonatype.nexus.ci.http.SonatypeHTTPBuilder
 
 import groovy.json.JsonOutput
 import spock.lang.Ignore
 import spock.lang.Specification
+
+import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.FAIL
+import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.PASS
 
 class BitbucketClientTest
     extends Specification
@@ -26,8 +28,8 @@ class BitbucketClientTest
   def client
 
   def setup() {
-    http = Mock(BitbucketHttpBuilderHelper)
-    client = new BitbucketClient(new URI('https://bitbucket:7990'), 'username', 'password')
+    http = Mock(SonatypeHTTPBuilder)
+    client = new BitbucketClient('https://bitbucket', 'username', 'password')
     client.http = http
   }
 
@@ -38,7 +40,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> url = args[0]}
+      1 * http.put(_, _, _) >> { args -> url = args[0]}
 
     and:
       url == 'https://bitbucket:7990/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/cards/NEXUS'
@@ -54,7 +56,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> headers = args[2]}
+      1 * http.put(_, _, _) >> { args -> headers = args[2]}
 
     and:
       headers == ['User-Agent':'nexus-jenkins-notifier', Authorization:'Basic dXNlcm5hbWU6cGFzc3dvcmQ=']
@@ -70,7 +72,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+      1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
       body['details'] == details
@@ -88,7 +90,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+      1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
       body['title'] == title
@@ -106,7 +108,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+      1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
       body['result'] == status
@@ -124,7 +126,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+      1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
       body['vendor'] == 'Nexus Jenkins Notifier'
@@ -142,7 +144,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+      1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and: 'components affected'
       body['data'][0]['title'] == 'Components Affected'
@@ -171,7 +173,7 @@ class BitbucketClientTest
       client.putCard(result)
 
     then:
-      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+      1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and: 'report link'
       body['data'][4]['title'] == 'View full report'
@@ -183,9 +185,9 @@ class BitbucketClientTest
   }
 
   @Ignore
-  def 'creates card for real'() {
+  def 'helper test to verify interaction with Bitbucket Server'() {
     setup:
-      def client = new BitbucketClient(new URI('http://localhost:7990'), 'jcava', 'password')
+      def client = new BitbucketClient('http://localhost:7990', 'jcava', 'password')
       def result = new PolicyEvaluationResult('int', 'mini-java-maven-app', '2ef71f840d1688b0eee0226c758456adccb66fd0',
           PASS, 5, 1, 2, 3,
           'https://policy.s/assets/index.html#/reports/webgoat/67a5be43062a40b8a739dc638b40bf91')

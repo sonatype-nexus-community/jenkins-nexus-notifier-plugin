@@ -10,18 +10,22 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.ci.notifier
+package org.sonatype.nexus.ci.http
 
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 
 import static groovyx.net.http.ContentType.JSON
 
-class BitbucketHttpBuilderHelper
+class SonatypeHTTPBuilder
+    extends HTTPBuilder
 {
-  def putCard(url, requestBody, requestHeaders) {
-    def http = new HTTPBuilder(url)
-    return http.request(Method.PUT, JSON) {
+  SonatypeHTTPBuilder(String url) {
+    super(url)
+  }
+
+  void put(url, requestBody, requestHeaders) {
+    this.request(url, Method.PUT, JSON) {
       req ->
         body = requestBody
         headers = requestHeaders
