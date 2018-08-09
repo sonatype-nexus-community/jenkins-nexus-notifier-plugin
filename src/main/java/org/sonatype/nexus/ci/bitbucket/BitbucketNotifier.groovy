@@ -10,12 +10,14 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.ci.notifier
+package org.sonatype.nexus.ci.bitbucket
 
 import javax.annotation.Nonnull
 
 import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction
-import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
+import org.sonatype.nexus.ci.notifier.BitbucketNotification
+import org.sonatype.nexus.ci.notifier.Messages
+import org.sonatype.nexus.ci.bitbucket.PolicyEvaluationResult.BuildStatus
 
 import hudson.AbortException
 import hudson.model.TaskListener

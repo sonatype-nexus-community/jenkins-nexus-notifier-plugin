@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
+import org.sonatype.nexus.ci.bitbucket.BitbucketNotifier;
 import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction;
 
 import hudson.AbortException;
