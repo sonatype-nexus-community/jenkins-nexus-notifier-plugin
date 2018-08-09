@@ -38,11 +38,12 @@ class BitbucketClient
   }
 
   def putCard(PolicyEvaluationResult result) {
-    return putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus, result.componentsAffected,
-        result.critical, result.severe, result.moderate, result.reportUrl)
+    return putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus,
+        result.componentsAffected, result.critical, result.severe, result.moderate, result.reportUrl)
   }
 
-  def putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate, reportUrl) {
+  def putCard(projectKey, repositorySlug, commitHash, buildStatus, componentsAffected, critical, severe, moderate,
+              reportUrl) {
     def url = getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash)
     def body = getPutCardRequestBody(componentsAffected, critical, severe, moderate, buildStatus, reportUrl)
     def headers = getRequestHeaders(username, password)
