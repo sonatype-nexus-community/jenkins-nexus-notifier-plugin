@@ -12,7 +12,8 @@
  */
 package org.sonatype.nexus.ci.notifier
 
-import org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus
+import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.PASS
+import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.FAIL
 
 import groovy.json.JsonOutput
 import spock.lang.Ignore
@@ -98,12 +99,48 @@ class BitbucketClientTest
       getFailPolicyEvaluationResult()    | 'Policy Violations Found'
   }
 
+  def 'put card has correct build status'() {
+    def body
+
+    when:
+      client.putCard(result)
+
+    then:
+      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+
+    and:
+      body['result'] == status
+
+    where:
+      result                             | status
+      getSuccessPolicyEvaluationResult() | PASS
+      getFailPolicyEvaluationResult()    | FAIL
+  }
+
+  def 'put card has correct vendor info'() {
+    def body
+
+    when:
+      client.putCard(result)
+
+    then:
+      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+
+    and:
+      body['vendor'] == 'Nexus Jenkins Notifier'
+      body['link'] == 'https://www.sonatype.com'
+      body['logoUrl'] == 'https://avatars0.githubusercontent.com/u/44938?s=200&v=4'
+
+    where:
+      result = getFailPolicyEvaluationResult()
+  }
+
   @Ignore
   def 'creates card for real'() {
     setup:
       def client = new BitBucketClient('localhost:7990', 'jcava', 'password')
       def result = new PolicyEvaluationResult('int', 'mini-java-maven-app', '2ef71f840d1688b0eee0226c758456adccb66fd0',
-          BuildStatus.PASS, 5, 1, 2, 3,
+          PASS, 5, 1, 2, 3,
           'https://policy.s/assets/index.html#/reports/webgoat/67a5be43062a40b8a739dc638b40bf91')
       def resp = client.putCard(result)
       def json = JsonOutput.toJson(resp)
@@ -114,10 +151,10 @@ class BitbucketClientTest
   }
 
   private PolicyEvaluationResult getFailPolicyEvaluationResult() {
-    new PolicyEvaluationResult('int', 'repo', 'abcdefg', BuildStatus.FAIL, 4, 1, 2, 3, 'https://host/report')
+    new PolicyEvaluationResult('int', 'repo', 'abcdefg', FAIL, 4, 1, 2, 3, 'https://host/report')
   }
 
   private PolicyEvaluationResult getSuccessPolicyEvaluationResult() {
-    new PolicyEvaluationResult('int', 'repo', 'abcdefg', BuildStatus.PASS, 2, 0, 0, 2, 'https://host/report')
+    new PolicyEvaluationResult('int', 'repo', 'abcdefg', PASS, 2, 0, 0, 2, 'https://host/report')
   }
 }
