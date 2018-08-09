@@ -135,6 +135,53 @@ class BitbucketClientTest
       result = getFailPolicyEvaluationResult()
   }
 
+  def 'put card has correct report summary info'() {
+    def body
+
+    when:
+      client.putCard(result)
+
+    then:
+      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+
+    and: 'components affected'
+      body['data'][0]['title'] == 'Components Affected'
+      body['data'][0]['value'] == 4
+
+    and: 'critical'
+      body['data'][1]['title'] == 'Critical'
+      body['data'][1]['value'] == 1
+
+    and: 'severe'
+      body['data'][2]['title'] == 'Severe'
+      body['data'][2]['value'] == 2
+
+    and: 'moderate'
+      body['data'][3]['title'] == 'Moderate'
+      body['data'][3]['value'] == 3
+
+    where:
+      result = getFailPolicyEvaluationResult()
+  }
+
+  def 'put card has correct report url'() {
+    def body
+
+    when:
+      client.putCard(result)
+
+    then:
+      1 * http.putCard(_, _, _) >> { args -> body = args[1]}
+
+    and: 'report link'
+      body['data'][4]['title'] == 'View full report'
+      body['data'][4]['type'] == 'LINK'
+      body['data'][4]['value']['href'] == 'https://host/report'
+
+    where:
+      result = getFailPolicyEvaluationResult()
+  }
+
   @Ignore
   def 'creates card for real'() {
     setup:
