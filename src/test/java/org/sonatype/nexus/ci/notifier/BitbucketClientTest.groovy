@@ -29,7 +29,7 @@ class BitbucketClientTest
 
   def setup() {
     http = Mock(SonatypeHTTPBuilder)
-    client = new BitbucketClient('https://bitbucket', 'username', 'password')
+    client = new BitbucketClient('https://bitbucket:7990', 'username', 'password')
     client.http = http
   }
 
