@@ -13,47 +13,40 @@
 package org.sonatype.nexus.ci.notifier
 
 import hudson.AbortException
+import hudson.FilePath
+import hudson.Launcher
 import hudson.model.Action
 import hudson.model.Run
 import hudson.model.TaskListener
 import spock.lang.Specification
 
-class BitbucketNotifierTest
+class NotifierStepTest
     extends Specification
 {
   def mockLogger = Mock(PrintStream)
   def mockListener = Mock(TaskListener)
 
-  BitbucketNotifier bitbucketNotifier
+  NotifierStep notifierStep
 
   def setup() {
     mockListener.getLogger() >> mockLogger
-    bitbucketNotifier = new BitbucketNotifier(mockListener)
+    notifierStep = new NotifierStep()
   }
 
   def 'throws abort exception when PolicyEvaluationHealthAction not available'() {
+    setup:
+      def tempWorkspace = File.createTempDir()
     when:
       def run = Mock(Run)
       run.getActions() >> new ArrayList<Action>()
-      bitbucketNotifier.send(run, '', '', '', null)
+      notifierStep.perform(run, new FilePath(tempWorkspace), Mock(Launcher), mockListener)
 
     then:
       AbortException ex = thrown()
       ex.getMessage() ==
-          'No policy evaluation results found. Run the Nexus Policy Evaluation before Bitbucket Notifier or pass ' +
-          'evaluation results as parameter.'
-  }
+          'No policy evaluation results found. Run the Nexus Policy Evaluation before Bitbucket Notifier.'
 
-  def 'throws abort exception when ApplicationPolicyEvaluation not valid type'() {
-    when:
-      def run = Mock(Run)
-      run.getActions() >> new ArrayList<Action>()
-      bitbucketNotifier.send(run, '', '', '', new Object())
-
-    then:
-      AbortException ex = thrown()
-      ex.getMessage() ==
-          'The object passed to the Bitbucket Notifier is not valid. Please pass result of Nexus Policy Evaluation to' +
-          ' the Bitbucket Notifier.'
+    cleanup:
+      tempWorkspace.delete()
   }
 }

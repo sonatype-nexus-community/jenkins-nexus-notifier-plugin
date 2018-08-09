@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.ci.notifier
+package org.sonatype.nexus.ci.bitbucket
 
 import org.sonatype.nexus.ci.http.SonatypeHTTPBuilder
 
@@ -18,8 +18,8 @@ import groovy.json.JsonOutput
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.FAIL
-import static org.sonatype.nexus.ci.notifier.PolicyEvaluationResult.BuildStatus.PASS
+import static org.sonatype.nexus.ci.bitbucket.PolicyEvaluationResult.BuildStatus.FAIL
+import static org.sonatype.nexus.ci.bitbucket.PolicyEvaluationResult.BuildStatus.PASS
 
 class BitbucketClientTest
     extends Specification
