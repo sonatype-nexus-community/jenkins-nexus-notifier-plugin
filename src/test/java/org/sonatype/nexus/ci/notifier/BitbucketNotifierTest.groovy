@@ -43,4 +43,17 @@ class BitbucketNotifierTest
           'No policy evaluation results found. Run the Nexus Policy Evaluation before Bitbucket Notifier or pass ' +
           'evaluation results as parameter.'
   }
+
+  def 'throws abort exception when ApplicationPolicyEvaluation not valid type'() {
+    when:
+      def run = Mock(Run)
+      run.getActions() >> new ArrayList<Action>()
+      bitbucketNotifier.send(run, new Object())
+
+    then:
+      AbortException ex = thrown()
+      ex.getMessage() ==
+          'The object passed to the Bitbucket Notifier is not valid. Please pass result of Nexus Policy Evaluation to' +
+          ' the Bitbucket Notifier.'
+  }
 }

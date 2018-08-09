@@ -14,9 +14,8 @@ package org.sonatype.nexus.ci.notifier
 
 import javax.annotation.Nonnull
 
-import com.sonatype.nexus.api.iq.ApplicationPolicyEvaluation
-
-import org.sonatype.nexus.ci.action.PolicyEvaluationHealthAction
+import org.sonatype.nexus.ci.model.ApplicationPolicyEvaluation
+import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction
 
 import hudson.AbortException
 import hudson.model.Run
@@ -30,8 +29,7 @@ class BitbucketNotifier
     this.listener = listener
   }
 
-  void send(@Nonnull final Run run,
-            final ApplicationPolicyEvaluation applicationPolicyEvaluation)
+  void send(@Nonnull final Run run, final Object applicationPolicyEvaluation)
   {
     def logger = listener.logger
     def policyEvaluationHealthAction = run.getAllActions().find({ action ->
@@ -40,6 +38,10 @@ class BitbucketNotifier
     if (!policyEvaluationHealthAction && !applicationPolicyEvaluation) {
       logger.println(Messages.BitbucketNotifierStep_NoPolicyAction())
       throw new AbortException(Messages.BitbucketNotifierStep_NoPolicyAction())
+    }
+    if (applicationPolicyEvaluation && !ApplicationPolicyEvaluation.assignableFrom(applicationPolicyEvaluation)) {
+      logger.println(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
+      throw new AbortException(Messages.BitbucketNotifierStep_IllegalArgumentPolicyEvaluation())
     }
   }
 }

@@ -14,7 +14,7 @@ package org.sonatype.nexus.ci.notifier;
 
 import javax.annotation.Nonnull;
 
-import com.sonatype.nexus.api.iq.ApplicationPolicyEvaluation;
+import org.sonatype.nexus.ci.util.FormUtil;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -23,7 +23,8 @@ import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Builder;
+import hudson.tasks.Notifier;
+import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
@@ -31,16 +32,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import static org.sonatype.nexus.ci.util.FormUtil.validateNotEmpty;
-
 public class BitbucketNotifierStep
-    extends Builder
+    extends Notifier
     implements SimpleBuildStep
 {
   private String projectKey;
   private String repositorySlug;
   private String commitHash;
-  private ApplicationPolicyEvaluation applicationPolicyEvaluation;
+  private Object applicationPolicyEvaluation;
 
   public String getProjectKey() {
     return projectKey;
@@ -55,11 +54,11 @@ public class BitbucketNotifierStep
   }
 
   @DataBoundSetter
-  public void setApplicationPolicyEvaluation(final ApplicationPolicyEvaluation applicationPolicyEvaluation) {
+  public void setApplicationPolicyEvaluation(final Object applicationPolicyEvaluation) {
     this.applicationPolicyEvaluation = applicationPolicyEvaluation;
   }
 
-  public ApplicationPolicyEvaluation getApplicationPolicyEvaluation() {
+  public Object getApplicationPolicyEvaluation() {
     return applicationPolicyEvaluation;
   }
 
@@ -86,7 +85,7 @@ public class BitbucketNotifierStep
   @Extension
   @Symbol("nexusIqBitbucketNotifier")
   public static final class DescriptorImpl
-      extends BuildStepDescriptor<Builder>
+      extends BuildStepDescriptor<Publisher>
   {
     @Override
     public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
@@ -99,15 +98,15 @@ public class BitbucketNotifierStep
     }
 
     public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
-      return validateNotEmpty(projectKey, Messages.BitbucketNotifierStep_ProjectKeyRequired());
+      return FormUtil.validateNotEmpty(projectKey, Messages.BitbucketNotifierStep_ProjectKeyRequired());
     }
 
     public FormValidation doCheckRepositorySlug(@QueryParameter String repositorySlug) {
-      return validateNotEmpty(repositorySlug, Messages.BitbucketNotifierStep_RepositorySlugRequired());
+      return FormUtil.validateNotEmpty(repositorySlug, Messages.BitbucketNotifierStep_RepositorySlugRequired());
     }
 
     public FormValidation doCheckCommitHash(@QueryParameter String commitHash) {
-      return validateNotEmpty(commitHash, Messages.BitbucketNotifierStep_CommitHashRequired());
+      return FormUtil.validateNotEmpty(commitHash, Messages.BitbucketNotifierStep_CommitHashRequired());
     }
   }
 }

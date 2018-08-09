@@ -10,13 +10,13 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.nexus.ci.action
+package org.sonatype.nexus.ci.model
 
 import hudson.model.Action
 import spock.lang.Specification
 
-import static org.sonatype.nexus.ci.action.PolicyEvaluationHealthAction.assignableFrom
-import static org.sonatype.nexus.ci.action.PolicyEvaluationHealthAction.build
+import static org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction.assignableFrom
+import static org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction.build
 
 class PolicyEvaluationHealthActionTest
     extends Specification
