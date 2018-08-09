@@ -28,7 +28,7 @@ class BitBucketClient
   }
 
   def putCard(PolicyEvaluationResult result) {
-    putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus, result.componentsAffected,
+    return putCard(result.projectKey, result.repositorySlug, result.commitHash, result.buildStatus, result.componentsAffected,
         result.critical, result.severe, result.moderate, result.reportUrl)
   }
 
@@ -41,7 +41,7 @@ class BitBucketClient
     return http.request(Method.PUT, JSON) {
       req ->
         body = [
-            data       : [
+            data: [
                 [
                     title: 'Components Affected',
                     value: componentsAffected
