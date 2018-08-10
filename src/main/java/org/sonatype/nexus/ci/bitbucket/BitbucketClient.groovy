@@ -17,11 +17,11 @@ import org.sonatype.nexus.ci.bitbucket.PolicyEvaluationResult.BuildStatus
 
 class BitbucketClient
 {
-  static String VENDOR_LINK = 'https://www.sonatype.com'
-
   static String USER_AGENT = 'nexus-jenkins-notifier'
 
-  static String LOGO_URL = 'https://avatars0.githubusercontent.com/u/44938?s=200&v=4'
+  static String LOGO_URL = 'http://cdn.sonatype.com/brand/logo/nexus-iq-64-no-background.png'
+
+  static String INSIGHT_KEY = 'sonatype-nexus-iq'
 
   SonatypeHTTPBuilder http
 
@@ -53,7 +53,7 @@ class BitbucketClient
 
   String getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash) {
     return "${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +
-        "${commitHash}/cards/NEXUS"
+        "${commitHash}/cards/${INSIGHT_KEY}"
   }
 
   Map getRequestHeaders(username, password) {
@@ -91,11 +91,11 @@ class BitbucketClient
           ]
         ]
       ],
-      details    : buildStatus == BuildStatus.FAIL ? 'Nexus Platform Plugin found policy violations.' : 'Success!',
-      title      : buildStatus == BuildStatus.FAIL ? 'Policy Violations Found' : 'No Policy Violations Found',
-      vendor     : 'Nexus Jenkins Notifier',
+      title      : 'Nexus IQ',
+      details    : buildStatus == BuildStatus.FAIL ? 'Policy Violations Found' : 'No Policy Violations Found',
+      vendor     : 'Sonatype',
       createdDate: System.currentTimeMillis(),
-      link       : VENDOR_LINK,
+      link       : reportUrl,
       logoUrl    : LOGO_URL,
       result     : buildStatus
     ]

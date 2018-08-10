@@ -43,7 +43,7 @@ class BitbucketClientTest
       1 * http.put(_, _, _) >> { args -> url = args[0]}
 
     and:
-      url == 'https://bitbucket:7990/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/cards/NEXUS'
+      url == 'https://bitbucket:7990/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/cards/sonatype-nexus-iq'
 
     where:
       result = getFailPolicyEvaluationResult()
@@ -79,26 +79,21 @@ class BitbucketClientTest
 
     where:
       result                             | details
-      getSuccessPolicyEvaluationResult() | 'Success!'
-      getFailPolicyEvaluationResult()    | 'Nexus Platform Plugin found policy violations.'
+      getSuccessPolicyEvaluationResult() | 'No Policy Violations Found'
+      getFailPolicyEvaluationResult()    | 'Policy Violations Found'
   }
 
   def 'put card has correct title'() {
     def body
 
     when:
-      client.putCard(result)
+      client.putCard(getSuccessPolicyEvaluationResult())
 
     then:
       1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
-      body['title'] == title
-
-    where:
-      result                             | title
-      getSuccessPolicyEvaluationResult() | 'No Policy Violations Found'
-      getFailPolicyEvaluationResult()    | 'Policy Violations Found'
+      body['title'] == 'Nexus IQ'
   }
 
   def 'put card has correct build status'() {
@@ -129,9 +124,9 @@ class BitbucketClientTest
       1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
-      body['vendor'] == 'Nexus Jenkins Notifier'
-      body['link'] == 'https://www.sonatype.com'
-      body['logoUrl'] == 'https://avatars0.githubusercontent.com/u/44938?s=200&v=4'
+      body['vendor'] == 'Sonatype'
+      body['link'] == 'https://host/report'
+      body['logoUrl'] == 'http://cdn.sonatype.com/brand/logo/nexus-iq-64-no-background.png'
 
     where:
       result = getFailPolicyEvaluationResult()
