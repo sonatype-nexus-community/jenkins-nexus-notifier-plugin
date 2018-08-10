@@ -16,7 +16,7 @@ import org.sonatype.nexus.ci.jenkins.notifier.BitbucketNotification
 
 def f = namespace(lib.FormTagLib)
 def c = namespace(lib.CredentialsTagLib)
-def typedDescriptor = (BitbucketNotifierStep.DescriptorImpl) descriptor
+def typedDescriptor = (BitbucketNotification.DescriptorImpl) descriptor
 
 f.section(title: typedDescriptor.displayName) {
   f.entry(title: _('Send Bitbucket Notification'), field: 'sendBitbucketNotification') {
