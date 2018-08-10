@@ -14,15 +14,15 @@ package org.sonatype.nexus.ci.bitbucket
 
 import javax.annotation.Nonnull
 
+import org.sonatype.nexus.ci.bitbucket.PolicyEvaluationResult.BuildStatus
 import org.sonatype.nexus.ci.model.PolicyEvaluationHealthAction
 import org.sonatype.nexus.ci.notifier.BitbucketNotification
-import org.sonatype.nexus.ci.notifier.Messages
-import org.sonatype.nexus.ci.bitbucket.PolicyEvaluationResult.BuildStatus
 
 import hudson.AbortException
 import hudson.model.TaskListener
 
 import static com.google.common.base.Preconditions.checkArgument
+import static com.google.common.base.Strings.isNullOrEmpty
 
 class BitbucketNotifier
 {
@@ -36,9 +36,9 @@ class BitbucketNotifier
             final BitbucketNotification bitbucketNotification,
             final PolicyEvaluationHealthAction policyEvaluationHealthAction)
   {
-    checkArgument(bitbucketNotification.projectKey != null, Messages.BitbucketNotifier_NoProjectKey())
-    checkArgument(bitbucketNotification.repositorySlug != null, Messages.BitbucketNotifier_NoRepositorySlug())
-    checkArgument(bitbucketNotification.commitHash != null, Messages.BitbucketNotifier_NoCommitHash())
+    checkArgument(!isNullOrEmpty(bitbucketNotification.projectKey), Messages.BitbucketNotifier_NoProjectKey())
+    checkArgument(!isNullOrEmpty(bitbucketNotification.repositorySlug), Messages.BitbucketNotifier_NoRepositorySlug())
+    checkArgument(!isNullOrEmpty(bitbucketNotification.commitHash), Messages.BitbucketNotifier_NoCommitHash())
 
 
     def client = BitbucketClientFactory.bitbucketClient

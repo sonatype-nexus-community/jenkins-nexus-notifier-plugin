@@ -67,6 +67,11 @@
         <artifactId>http-builder</artifactId>
         <version>0.7</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>26.0-jre</version>
+      </dependency>
 
       <dependency>
         <groupId>org.spockframework</groupId>
@@ -101,6 +106,10 @@
     <dependency>
       <groupId>org.codehaus.groovy.modules.http-builder</groupId>
       <artifactId>http-builder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
     </dependency>
 
     <dependency>

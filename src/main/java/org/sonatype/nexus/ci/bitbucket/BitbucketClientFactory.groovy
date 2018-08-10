@@ -13,7 +13,6 @@
 package org.sonatype.nexus.ci.bitbucket
 
 import org.sonatype.nexus.ci.config.NotifierConfiguration
-import org.sonatype.nexus.ci.notifier.Messages
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers
 import com.cloudbees.plugins.credentials.CredentialsProvider

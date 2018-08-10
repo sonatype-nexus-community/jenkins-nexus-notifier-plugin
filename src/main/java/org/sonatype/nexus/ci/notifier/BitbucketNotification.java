@@ -73,15 +73,15 @@ public class BitbucketNotification
     }
 
     public FormValidation doCheckProjectKey(@QueryParameter String projectKey) {
-      return FormUtil.validateNotEmpty(projectKey, Messages.BitbucketNotifierStep_ProjectKeyRequired());
+      return FormUtil.validateNotEmpty(projectKey, Messages.BitbucketNotification_ProjectKeyRequired());
     }
 
     public FormValidation doCheckRepositorySlug(@QueryParameter String repositorySlug) {
-      return FormUtil.validateNotEmpty(repositorySlug, Messages.BitbucketNotifierStep_RepositorySlugRequired());
+      return FormUtil.validateNotEmpty(repositorySlug, Messages.BitbucketNotification_RepositorySlugRequired());
     }
 
     public FormValidation doCheckCommitHash(@QueryParameter String commitHash) {
-      return FormUtil.validateNotEmpty(commitHash, Messages.BitbucketNotifierStep_CommitHashRequired());
+      return FormUtil.validateNotEmpty(commitHash, Messages.BitbucketNotification_CommitHashRequired());
     }
   }
 }
