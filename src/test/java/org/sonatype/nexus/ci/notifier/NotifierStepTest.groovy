@@ -44,7 +44,7 @@ class NotifierStepTest
     then:
       AbortException ex = thrown()
       ex.getMessage() ==
-          'No policy evaluation results found. Run the Nexus Policy Evaluation before Bitbucket Notifier.'
+          'No policy evaluation results found. Run the Nexus Policy Evaluation before Nexus Notifier.'
 
     cleanup:
       tempWorkspace.delete()

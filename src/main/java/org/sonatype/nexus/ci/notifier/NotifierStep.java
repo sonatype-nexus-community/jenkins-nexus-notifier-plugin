@@ -66,8 +66,8 @@ public class NotifierStep
         .filter(PolicyEvaluationHealthAction::assignableFrom).findFirst();
 
     if (!optionalPolicyEvaluation.isPresent()) {
-      logger.println(Messages.BitbucketNotifierStep_NoPolicyAction());
-      throw new AbortException(Messages.BitbucketNotifierStep_NoPolicyAction());
+      logger.println(Messages.NotifierStep_NoPolicyAction());
+      throw new AbortException(Messages.NotifierStep_NoPolicyAction());
     }
 
     boolean buildPassing = run.getResult() == Result.SUCCESS;
