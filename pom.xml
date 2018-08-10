@@ -23,12 +23,12 @@
     <relativePath/>
   </parent>
 
-  <groupId>org.sonatype.nexus.ci</groupId>
-  <artifactId>nexus-jenkins-notifier-plugin</artifactId>
+  <groupId>org.sonatype.nexus.ci.jenkins</groupId>
+  <artifactId>nexus-notifier</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
-  <name>Nexus Notifier Plugin</name>
+  <name>Nexus Notifier</name>
 
   <licenses>
     <license>
