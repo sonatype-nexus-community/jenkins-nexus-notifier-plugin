@@ -26,14 +26,17 @@ import static com.google.common.base.Preconditions.checkNotNull
 
 class BitbucketClientFactory
 {
-  static BitbucketClient getBitbucketClient() {
+  static BitbucketClient getBitbucketClient(String jobCredentialsId = null) {
     def configuration = NotifierConfiguration.getNotifierConfiguration()
     checkArgument(configuration != null, Messages.BitbucketClientFactory_NoConfiguration())
     checkArgument(configuration.bitbucketConfigs != null, Messages.BitbucketClientFactory_NoConfiguration())
     checkArgument(configuration.bitbucketConfigs.size() > 0, Messages.BitbucketClientFactory_NoConfiguration())
 
     def bitbucketConfig = configuration.bitbucketConfigs.get(0)
-    def credentials = findCredentials(bitbucketConfig.serverUrl, bitbucketConfig.credentialsId)
+
+    def credentialsId = jobCredentialsId ?: bitbucketConfig.credentialsId
+
+    def credentials = findCredentials(bitbucketConfig.serverUrl, credentialsId)
 
     return new BitbucketClient(bitbucketConfig.serverUrl, credentials.username, credentials.password.plainText)
   }

@@ -12,15 +12,25 @@
  */
 package org.sonatype.nexus.ci.jenkins.notifier;
 
+<<<<<<< HEAD:src/main/java/org/sonatype/nexus/ci/jenkins/notifier/BitbucketNotification.java
+import org.sonatype.nexus.ci.jenkins.config.BitbucketConfiguration;
+import org.sonatype.nexus.ci.jenkins.config.NotifierConfiguration;
 import org.sonatype.nexus.ci.jenkins.util.FormUtil;
+=======
+import org.sonatype.nexus.ci.config.BitbucketConfiguration;
+import org.sonatype.nexus.ci.config.NotifierConfiguration;
+import org.sonatype.nexus.ci.util.FormUtil;
+>>>>>>> Add job specific credentials.:src/main/java/org/sonatype/nexus/ci/notifier/BitbucketNotification.java
 
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import hudson.model.Job;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -95,9 +105,12 @@ public class BitbucketNotification
       return FormUtil.validateNotEmpty(commitHash, Messages.BitbucketNotification_CommitHashRequired());
     }
 
-    public ListBoxModel doFillJobCredentialsIdItems() {
-      return FormUtil
-          .newCredentialsItemsListBoxModel(BitbucketConfiguration.serverUrl, BitbucketConfiguration.credentialsId);
+    public ListBoxModel doFillJobCredentialsIdItems(@AncestorInPath final Job job) {
+      NotifierConfiguration configuration = NotifierConfiguration.getNotifierConfiguration();
+
+      BitbucketConfiguration bitbucketConfiguration = configuration.getBitbucketConfigs().get(0);
+      return FormUtil.newCredentialsItemsListBoxModel(bitbucketConfiguration.getServerUrl(),
+          bitbucketConfiguration.getCredentialsId(), job);
     }
   }
 }

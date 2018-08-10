@@ -27,8 +27,8 @@ import org.kohsuke.stapler.QueryParameter
 class BitbucketConfiguration
     implements Describable<BitbucketConfiguration>
 {
-  public static String serverUrl
-  public static String credentialsId
+  String serverUrl
+  String credentialsId
 
   @DataBoundConstructor
   BitbucketConfiguration(final String serverUrl, final String credentialsId) {
@@ -60,7 +60,7 @@ class BitbucketConfiguration
 
     ListBoxModel doFillCredentialsIdItems(@QueryParameter String serverUrl,
                                           @QueryParameter String credentialsId) {
-      return FormUtil.newCredentialsItemsListBoxModel(serverUrl, credentialsId)
+      return FormUtil.newCredentialsItemsListBoxModel(serverUrl, credentialsId, null)
     }
   }
 }

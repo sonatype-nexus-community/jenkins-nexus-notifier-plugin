@@ -40,8 +40,8 @@ class BitbucketNotifier
     checkArgument(!isNullOrEmpty(bitbucketNotification.repositorySlug), Messages.BitbucketNotifier_NoRepositorySlug())
     checkArgument(!isNullOrEmpty(bitbucketNotification.commitHash), Messages.BitbucketNotifier_NoCommitHash())
 
+    def client = BitbucketClientFactory.getBitbucketClient(bitbucketNotification.jobCredentialsId)
 
-    def client = BitbucketClientFactory.bitbucketClient
     sendPolicyEvaluationHealthAction(client, bitbucketNotification.projectKey, bitbucketNotification.repositorySlug,
         bitbucketNotification.commitHash, buildPassing,
         PolicyEvaluationHealthAction.build(policyEvaluationHealthAction))

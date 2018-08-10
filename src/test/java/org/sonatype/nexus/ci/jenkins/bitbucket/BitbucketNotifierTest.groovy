@@ -34,7 +34,7 @@ class BitbucketNotifierTest
 
   def 'send requires projectKey'() {
     when:
-      bitbucketNotifier.send(true, new BitbucketNotification(true, emptyOptions, 'slug', 'commit'), null)
+      bitbucketNotifier.send(true, new BitbucketNotification(true, emptyOptions, 'slug', 'commit', null), null)
 
     then:
       IllegalArgumentException ex = thrown()
@@ -46,7 +46,7 @@ class BitbucketNotifierTest
 
   def 'send requires repository slug'() {
     when:
-      bitbucketNotifier.send(true, new BitbucketNotification(true, 'prokectKey', emptyOptions, 'commit'), null)
+      bitbucketNotifier.send(true, new BitbucketNotification(true, 'prokectKey', emptyOptions, 'commit', null), null)
 
     then:
       IllegalArgumentException ex = thrown()
@@ -58,7 +58,7 @@ class BitbucketNotifierTest
 
   def 'send requires commit hash'() {
     when:
-      bitbucketNotifier.send(true, new BitbucketNotification(true, 'projectKey', 'slug', emptyOptions), null)
+      bitbucketNotifier.send(true, new BitbucketNotification(true, 'projectKey', 'slug', emptyOptions, null), null)
 
     then:
       IllegalArgumentException ex = thrown()
@@ -77,10 +77,10 @@ class BitbucketNotifierTest
           severeComponentCount: 3,
           moderateComponentCount: 5
         )
-      def bitbucketNotification = new BitbucketNotification(true, 'projectKey', 'repositorySlug', 'commitHash')
+      def bitbucketNotification = new BitbucketNotification(true, 'projectKey', 'repositorySlug', 'commitHash', null)
       GroovyMock(BitbucketClientFactory.class, global: true)
       def client = Mock(BitbucketClient.class)
-      BitbucketClientFactory.getBitbucketClient() >> client
+      BitbucketClientFactory.getBitbucketClient(_) >> client
 
     when:
       bitbucketNotifier.send(buildPassing, bitbucketNotification, policyEvaluationHealthAction)
