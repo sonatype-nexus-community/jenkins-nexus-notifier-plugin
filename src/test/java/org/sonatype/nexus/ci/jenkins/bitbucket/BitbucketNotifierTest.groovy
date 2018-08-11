@@ -84,6 +84,27 @@ class BitbucketNotifierTest
       1 * BitbucketClientFactory.getBitbucketClient('overrideId') >> client
   }
 
+  def 'send expands notification arguments'() {
+    setup:
+      GroovyMock(BitbucketClientFactory.class, global: true)
+      def client = Mock(BitbucketClient.class)
+      BitbucketClientFactory.getBitbucketClient() >> client
+
+    when:
+      mockRun.getEnvironment(_) >> ['projectKey': 'project', 'repositorySlug': 'repo', 'commitHash': 'abcdefg']
+      bitbucketNotifier = new BitbucketNotifier(mockRun, mockListener)
+      bitbucketNotifier.send(true, new BitbucketNotification(true, '${projectKey}', '${repositorySlug}',
+          '${commitHash}'), Mock(PolicyEvaluationHealthAction))
+
+    then:
+      1 * client.putCard(_) >> { arugments ->
+        def policyEvaluationResult = arugments[0] as PolicyEvaluationResult
+        assert policyEvaluationResult.projectKey == 'project'
+        assert policyEvaluationResult.repositorySlug == 'repo'
+        assert policyEvaluationResult.commitHash == 'abcdefg'
+      }
+  }
+
   def 'putsCard to Bitbucket client'() {
     setup:
       def policyEvaluationHealthAction = new PolicyEvaluationHealthAction(
