@@ -68,6 +68,19 @@ class BitbucketNotifierTest
       emptyOptions << [ null, '' ]
   }
 
+  def 'creates Bitbucket client with job credentials override'() {
+    setup:
+      GroovyMock(BitbucketClientFactory.class, global: true)
+      def client = Mock(BitbucketClient.class)
+
+    when:
+      bitbucketNotifier.send(true, new BitbucketNotification(true, 'projectKey', 'slug', 'commit', 'overrideId'),
+          Mock(PolicyEvaluationHealthAction))
+
+    then:
+      1 * BitbucketClientFactory.getBitbucketClient('overrideId') >> client
+  }
+
   def 'putsCard to Bitbucket client'() {
     setup:
       def policyEvaluationHealthAction = new PolicyEvaluationHealthAction(
