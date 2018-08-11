@@ -137,7 +137,7 @@ class BitbucketClientFactoryTest
       def bitbucketConfig = new BitbucketConfiguration('http://server.com', 'credentialsId')
       NotifierConfiguration.notifierConfiguration.bitbucketConfigs = Lists.asList(bitbucketConfig)
 
-    when:
+    when: 'an override id is provided'
       def bitbucketClient = BitbucketClientFactory.getBitbucketClient('overrideId')
 
     then: 'the override credentials id is used'
