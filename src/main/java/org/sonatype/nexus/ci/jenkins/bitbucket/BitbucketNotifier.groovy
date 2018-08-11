@@ -19,6 +19,7 @@ import org.sonatype.nexus.ci.jenkins.model.PolicyEvaluationHealthAction
 import org.sonatype.nexus.ci.jenkins.notifier.BitbucketNotification
 
 import hudson.AbortException
+import hudson.model.Run
 import hudson.model.TaskListener
 
 import static com.google.common.base.Preconditions.checkArgument
@@ -26,9 +27,13 @@ import static com.google.common.base.Strings.isNullOrEmpty
 
 class BitbucketNotifier
 {
+  final Run run
+  final TaskListener listener
   final PrintStream logger
 
-  BitbucketNotifier(@Nonnull final TaskListener listener) {
+  BitbucketNotifier(@Nonnull final Run run, @Nonnull final TaskListener listener) {
+    this.run = run
+    this.listener = listener
     this.logger = listener.logger
   }
 
@@ -42,8 +47,12 @@ class BitbucketNotifier
 
     def client = BitbucketClientFactory.getBitbucketClient(bitbucketNotification.jobCredentialsId)
 
-    sendPolicyEvaluationHealthAction(client, bitbucketNotification.projectKey, bitbucketNotification.repositorySlug,
-        bitbucketNotification.commitHash, buildPassing,
+    def envVars = run.getEnvironment(listener)
+    def projectKey = envVars.expand(bitbucketNotification.projectKey)
+    def repositorySlug = envVars.expand(bitbucketNotification.repositorySlug)
+    def commitHash = envVars.expand(bitbucketNotification.commitHash)
+
+    sendPolicyEvaluationHealthAction(client, projectKey, repositorySlug, commitHash, buildPassing,
         PolicyEvaluationHealthAction.build(policyEvaluationHealthAction))
   }
 

@@ -16,6 +16,7 @@ import org.sonatype.nexus.ci.jenkins.bitbucket.PolicyEvaluationResult.BuildStatu
 import org.sonatype.nexus.ci.jenkins.model.PolicyEvaluationHealthAction
 import org.sonatype.nexus.ci.jenkins.notifier.BitbucketNotification
 
+import hudson.model.Run
 import hudson.model.TaskListener
 import spock.lang.Specification
 
@@ -24,12 +25,14 @@ class BitbucketNotifierTest
 {
   def mockLogger = Mock(PrintStream)
   def mockListener = Mock(TaskListener)
+  def mockRun = Mock(Run)
 
   BitbucketNotifier bitbucketNotifier
 
   def setup() {
     mockListener.getLogger() >> mockLogger
-    bitbucketNotifier = new BitbucketNotifier(mockListener)
+    mockRun.getEnvironment(_) >> [:]
+    bitbucketNotifier = new BitbucketNotifier(mockRun, mockListener)
   }
 
   def 'send requires projectKey'() {
