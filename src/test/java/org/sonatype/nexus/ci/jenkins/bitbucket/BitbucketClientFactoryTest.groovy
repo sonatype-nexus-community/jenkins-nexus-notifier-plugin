@@ -118,6 +118,32 @@ class BitbucketClientFactoryTest
       def bitbucketClient = BitbucketClientFactory.getBitbucketClient()
 
     then:
+      1 * CredentialsMatchers.withId('credentialsId')
+
+    and:
+      bitbucketClient != null
+      bitbucketClient.username == 'username'
+      bitbucketClient.password == 'password'
+  }
+
+  def 'creates Bitbucket client with override credentials'() {
+    setup:
+      StandardCredentials credentials = Mock(StandardUsernamePasswordCredentials)
+      GroovyMock(CredentialsMatchers.class, global: true)
+      credentials.getUsername() >> 'username'
+      credentials.getPassword() >> new Secret('password')
+      CredentialsMatchers.firstOrNull(_, _) >> credentials
+
+      def bitbucketConfig = new BitbucketConfiguration('http://server.com', 'credentialsId')
+      NotifierConfiguration.notifierConfiguration.bitbucketConfigs = Lists.asList(bitbucketConfig)
+
+    when:
+      def bitbucketClient = BitbucketClientFactory.getBitbucketClient('overrideId')
+
+    then: 'the override credentials id is used'
+      1 * CredentialsMatchers.withId('overrideId')
+
+    and:
       bitbucketClient != null
       bitbucketClient.username == 'username'
       bitbucketClient.password == 'password'
