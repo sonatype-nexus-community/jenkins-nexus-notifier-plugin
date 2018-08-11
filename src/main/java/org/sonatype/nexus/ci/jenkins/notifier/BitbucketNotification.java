@@ -12,15 +12,9 @@
  */
 package org.sonatype.nexus.ci.jenkins.notifier;
 
-<<<<<<< HEAD:src/main/java/org/sonatype/nexus/ci/jenkins/notifier/BitbucketNotification.java
 import org.sonatype.nexus.ci.jenkins.config.BitbucketConfiguration;
 import org.sonatype.nexus.ci.jenkins.config.NotifierConfiguration;
 import org.sonatype.nexus.ci.jenkins.util.FormUtil;
-=======
-import org.sonatype.nexus.ci.config.BitbucketConfiguration;
-import org.sonatype.nexus.ci.config.NotifierConfiguration;
-import org.sonatype.nexus.ci.util.FormUtil;
->>>>>>> Add job specific credentials.:src/main/java/org/sonatype/nexus/ci/notifier/BitbucketNotification.java
 
 import hudson.Extension;
 import hudson.model.Describable;
