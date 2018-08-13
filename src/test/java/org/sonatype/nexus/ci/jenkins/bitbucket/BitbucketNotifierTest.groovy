@@ -88,13 +88,13 @@ class BitbucketNotifierTest
     setup:
       GroovyMock(BitbucketClientFactory.class, global: true)
       def client = Mock(BitbucketClient.class)
-      BitbucketClientFactory.getBitbucketClient() >> client
+      BitbucketClientFactory.getBitbucketClient(_) >> client
 
     when:
       mockRun.getEnvironment(_) >> ['projectKey': 'project', 'repositorySlug': 'repo', 'commitHash': 'abcdefg']
       bitbucketNotifier = new BitbucketNotifier(mockRun, mockListener)
       bitbucketNotifier.send(true, new BitbucketNotification(true, '${projectKey}', '${repositorySlug}',
-          '${commitHash}'), Mock(PolicyEvaluationHealthAction))
+          '${commitHash}', null), Mock(PolicyEvaluationHealthAction))
 
     then:
       1 * client.putCard(_) >> { arugments ->
