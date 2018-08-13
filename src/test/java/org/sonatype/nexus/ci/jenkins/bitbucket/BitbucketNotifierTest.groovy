@@ -16,6 +16,7 @@ import org.sonatype.nexus.ci.jenkins.bitbucket.PolicyEvaluationResult.BuildStatu
 import org.sonatype.nexus.ci.jenkins.model.PolicyEvaluationHealthAction
 import org.sonatype.nexus.ci.jenkins.notifier.BitbucketNotification
 
+import hudson.model.Run
 import hudson.model.TaskListener
 import spock.lang.Specification
 
@@ -24,12 +25,14 @@ class BitbucketNotifierTest
 {
   def mockLogger = Mock(PrintStream)
   def mockListener = Mock(TaskListener)
+  def mockRun = Mock(Run)
 
   BitbucketNotifier bitbucketNotifier
 
   def setup() {
     mockListener.getLogger() >> mockLogger
-    bitbucketNotifier = new BitbucketNotifier(mockListener)
+    mockRun.getEnvironment(_) >> [:]
+    bitbucketNotifier = new BitbucketNotifier(mockRun, mockListener)
   }
 
   def 'send requires projectKey'() {
@@ -79,6 +82,27 @@ class BitbucketNotifierTest
 
     then:
       1 * BitbucketClientFactory.getBitbucketClient('overrideId') >> client
+  }
+
+  def 'send expands notification arguments'() {
+    setup:
+      GroovyMock(BitbucketClientFactory.class, global: true)
+      def client = Mock(BitbucketClient.class)
+      BitbucketClientFactory.getBitbucketClient(_) >> client
+
+    when:
+      mockRun.getEnvironment(_) >> ['projectKey': 'project', 'repositorySlug': 'repo', 'commitHash': 'abcdefg']
+      bitbucketNotifier = new BitbucketNotifier(mockRun, mockListener)
+      bitbucketNotifier.send(true, new BitbucketNotification(true, '${projectKey}', '${repositorySlug}',
+          '${commitHash}', null), Mock(PolicyEvaluationHealthAction))
+
+    then:
+      1 * client.putCard(_) >> { arugments ->
+        def policyEvaluationResult = arugments[0] as PolicyEvaluationResult
+        assert policyEvaluationResult.projectKey == 'project'
+        assert policyEvaluationResult.repositorySlug == 'repo'
+        assert policyEvaluationResult.commitHash == 'abcdefg'
+      }
   }
 
   def 'putsCard to Bitbucket client'() {

@@ -76,7 +76,7 @@ public class NotifierStep
         .build(optionalPolicyEvaluation.get());
 
     if (bitbucketNotification != null && bitbucketNotification.getSendBitbucketNotification()) {
-      new BitbucketNotifier(listener).send(buildPassing, bitbucketNotification, policyEvaluationHealthAction);
+      new BitbucketNotifier(run, listener).send(buildPassing, bitbucketNotification, policyEvaluationHealthAction);
     }
   }
 
