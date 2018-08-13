@@ -69,6 +69,6 @@ class FormUtil
         ancestor ?: Jenkins.get(),
         StandardCredentials,
         fromUri(serverUrl).build(),
-        anyOf(instanceOf(StandardUsernamePasswordCredentials), instanceOf(StandardCertificateCredentials)))
+        anyOf(instanceOf(StandardUsernamePasswordCredentials)))
   }
 }

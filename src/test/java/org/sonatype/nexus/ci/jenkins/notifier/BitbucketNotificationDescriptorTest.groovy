@@ -12,12 +12,20 @@
  */
 package org.sonatype.nexus.ci.jenkins.notifier
 
+import org.sonatype.nexus.ci.jenkins.config.NotifierConfiguration
+
+import com.google.common.collect.Lists
 import hudson.util.FormValidation.Kind
+import org.junit.Rule
+import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
 
 class BitbucketNotificationDescriptorTest
     extends Specification
 {
+  @Rule
+  public JenkinsRule jenkinsRule = new JenkinsRule()
+
   BitbucketNotification.DescriptorImpl descriptor = new BitbucketNotification.DescriptorImpl()
 
   def 'it validates project key'() {
@@ -69,5 +77,23 @@ class BitbucketNotificationDescriptorTest
       ''     | Kind.ERROR | 'Commit Hash is a required field'
       null   | Kind.ERROR | 'Commit Hash is a required field'
       'hash' | Kind.OK    | '<div/>'
+  }
+
+  def 'requires global Bitbucket configuration'() {
+    setup:
+      invalidConfig()
+
+    when:
+      descriptor.doFillJobCredentialsIdItems(null)
+
+    then:
+      IllegalArgumentException ex = thrown()
+      ex.message == 'Bitbucket Notifier must be configured in Global Configuration to be used'
+
+    where:
+      invalidConfig << [
+          { NotifierConfiguration.notifierConfiguration.bitbucketConfigs = null },
+          { NotifierConfiguration.notifierConfiguration.bitbucketConfigs = Lists.newArrayList() }
+      ]
   }
 }

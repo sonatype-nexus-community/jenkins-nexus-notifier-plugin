@@ -28,6 +28,8 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class BitbucketNotification
     implements Describable<BitbucketNotification>
 {
@@ -101,6 +103,9 @@ public class BitbucketNotification
 
     public ListBoxModel doFillJobCredentialsIdItems(@AncestorInPath final Job job) {
       NotifierConfiguration configuration = NotifierConfiguration.getNotifierConfiguration();
+      checkArgument(configuration != null, Messages.BitbucketClientFactory_NoConfiguration());
+      checkArgument(configuration.getBitbucketConfigs() != null, Messages.BitbucketClientFactory_NoConfiguration());
+      checkArgument(configuration.getBitbucketConfigs().size() > 0, Messages.BitbucketClientFactory_NoConfiguration());
 
       BitbucketConfiguration bitbucketConfiguration = configuration.getBitbucketConfigs().get(0);
       return FormUtil.newCredentialsItemsListBoxModel(bitbucketConfiguration.getServerUrl(),
