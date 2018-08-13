@@ -12,7 +12,6 @@
  */
 package org.sonatype.nexus.ci.jenkins.bitbucket
 
-import org.sonatype.nexus.ci.jenkins.bitbucket.PolicyEvaluationResult.BuildStatus
 import org.sonatype.nexus.ci.jenkins.http.SonatypeHTTPBuilder
 
 class BitbucketClient
@@ -91,8 +90,8 @@ class BitbucketClient
           ]
         ]
       ],
-      title      : 'Nexus IQ',
-      details    : buildStatus == BuildStatus.FAIL ? 'Policy Violations Found' : 'No Policy Violations Found',
+      title      : 'Nexus Lifecycle',
+      details    : componentsAffected > 0 ? 'Policy Violations Found' : 'No Policy Violations Found',
       vendor     : 'Sonatype',
       createdDate: System.currentTimeMillis(),
       link       : reportUrl,

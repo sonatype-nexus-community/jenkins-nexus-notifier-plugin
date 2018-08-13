@@ -93,7 +93,7 @@ class BitbucketClientTest
       1 * http.put(_, _, _) >> { args -> body = args[1]}
 
     and:
-      body['title'] == 'Nexus IQ'
+      body['title'] == 'Nexus Lifecycle'
   }
 
   def 'put card has correct build status'() {
@@ -199,6 +199,6 @@ class BitbucketClientTest
   }
 
   private PolicyEvaluationResult getSuccessPolicyEvaluationResult() {
-    new PolicyEvaluationResult('int', 'repo', 'abcdefg', PASS, 2, 0, 0, 2, 'https://host/report')
+    new PolicyEvaluationResult('int', 'repo', 'abcdefg', PASS, 0, 0, 0, 0, 'https://host/report')
   }
 }
