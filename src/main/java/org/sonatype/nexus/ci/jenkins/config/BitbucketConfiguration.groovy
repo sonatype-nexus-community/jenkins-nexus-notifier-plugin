@@ -60,7 +60,7 @@ class BitbucketConfiguration
 
     ListBoxModel doFillCredentialsIdItems(@QueryParameter String serverUrl,
                                           @QueryParameter String credentialsId) {
-      return FormUtil.newCredentialsItemsListBoxModel(serverUrl, credentialsId)
+      return FormUtil.newCredentialsItemsListBoxModel(serverUrl, credentialsId, null)
     }
   }
 }
