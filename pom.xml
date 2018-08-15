@@ -28,7 +28,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
-  <name>Nexus Notifier</name>
+  <name>Nexus Notifier Plugin</name>
 
   <licenses>
     <license>
@@ -37,9 +37,24 @@
     </license>
   </licenses>
 
+  <scm>
+    <connection>scm:git:ssh://github.com/sonatype/jenkins-nexus-notifier-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/sonatype/jenkins-nexus-notifier-plugin.git</developerConnection>
+    <url>https://github.com/sonatype/jenkins-nexus-notifier-plugin</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>whyjustin</id>
+      <name>Sonatype, Inc.</name>
+      <organization>Sonatype, Inc.</organization>
+    </developer>
+  </developers>
+
   <properties>
     <enforcer.skip>true</enforcer.skip>
     <jenkins.version>2.121.2</jenkins.version>
+    <java.level>8</java.level>
 
     <findbugs-maven-plugin.version>3.0.2</findbugs-maven-plugin.version>
     <jvnet-localizer-plugin.version>1.23</jvnet-localizer-plugin.version>
@@ -47,7 +62,20 @@
     <buildsupport.version>10</buildsupport.version>
     <buildsupport.license-maven-plugin.version>2.11</buildsupport.license-maven-plugin.version>
 
-    <java.level>8</java.level>
+    <public.serverId>sonatype-public</public.serverId>
+    <public.nexusUrl>https://repository.sonatype.org</public.nexusUrl>
+    <public-release.serverId>${public.serverId}</public-release.serverId>
+    <public-release.url>
+      https://repository.sonatype.org/service/local/staging/deploy/maven2
+    </public-release.url>
+    <public-snapshot.serverId>${public.serverId}</public-snapshot.serverId>
+    <public-snapshot.url>
+      https://repository.sonatype.org/content/repositories/snapshots
+    </public-snapshot.url>
+
+    <staging.serverId>${public.serverId}</staging.serverId>
+    <staging.nexusUrl>${public.nexusUrl}</staging.nexusUrl>
+    <staging.progressTimeout>15</staging.progressTimeout>
   </properties>
 
   <dependencyManagement>
@@ -264,6 +292,58 @@
       <id>license-check</id>
       <build>
         <defaultGoal>com.mycila:license-maven-plugin:check</defaultGoal>
+      </build>
+    </profile>
+
+    <profile>
+      <id>sonatype</id>
+      <distributionManagement>
+        <repository>
+          <id>${public-release.serverId}</id>
+          <url>${public-release.url}</url>
+        </repository>
+        <snapshotRepository>
+          <id>${public-snapshot.serverId}</id>
+          <url>${public-snapshot.url}</url>
+        </snapshotRepository>
+      </distributionManagement>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.6</version>
+            <extensions>true</extensions>
+            <configuration>
+              <nexusUrl>${staging.nexusUrl}</nexusUrl>
+              <serverId>${staging.serverId}</serverId>
+              <altStagingDirectory>${staging.directory}</altStagingDirectory>
+              <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+              <stagingProgressTimeoutMinutes>${staging.progressTimeout}</stagingProgressTimeoutMinutes>
+              <tags>
+                <localUsername>${user.name}</localUsername>
+                <javaVersion>${java.version}</javaVersion>
+              </tags>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <!--suppress MavenModelInspection -->
+              <passphrase>${gpg.passphrase}</passphrase>
+              <useAgent>true</useAgent>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
