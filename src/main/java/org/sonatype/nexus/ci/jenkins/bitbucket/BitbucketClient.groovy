@@ -52,7 +52,7 @@ class BitbucketClient
 
   String getPutCardRequestUrl(serverUrl, projectKey, repositorySlug, commitHash) {
     return "${serverUrl}/rest/insights/1.0/projects/${projectKey}/repos/${repositorySlug}/commits/" +
-        "${commitHash}/cards/${INSIGHT_KEY}"
+        "${commitHash}/reports/${INSIGHT_KEY}"
   }
 
   Map getRequestHeaders(username, password) {

@@ -43,7 +43,7 @@ class BitbucketClientTest
       1 * http.put(_, _, _) >> { args -> url = args[0]}
 
     and:
-      url == 'https://bitbucket:7990/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/cards/sonatype-nexus-iq'
+      url == 'https://bitbucket:7990/rest/insights/1.0/projects/int/repos/repo/commits/abcdefg/reports/sonatype-nexus-iq'
 
     where:
       result = getFailPolicyEvaluationResult()
