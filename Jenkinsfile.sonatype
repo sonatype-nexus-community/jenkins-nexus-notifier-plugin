@@ -138,7 +138,8 @@ if (!params.isRelease) {
         OsTools.runSafe(this, """
           curl --header "Content-Type:application/octet-stream" \\
             --data-binary @${WORKSPACE}/target/${pom.artifactId}-${version}.hpi \\
-            https://${env.GITHUB_API_USERNAME}:${env.GITHUB_API_PASSWORD}@${releaseResponseContents.upload_url}/repos/sonatype/jenkins-nexus-notifier-plugin/releases/${releaseResponseContents.id}/assets?name=${pom.artifactId}-${version}.hpi
+            --user ${env.GITHUB_API_USERNAME}:${env.GITHUB_API_PASSWORD} \\
+            ${releaseResponseContents.upload_url}/repos/sonatype/jenkins-nexus-notifier-plugin/releases/${releaseResponseContents.id}/assets?name=${pom.artifactId}-${version}.hpi
         """)
       }
 
