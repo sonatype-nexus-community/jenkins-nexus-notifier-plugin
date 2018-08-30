@@ -113,12 +113,33 @@ if (!params.isRelease) {
         }
       }
     }
-    input 'Push tags?'
+    input 'Push tags and release to GitHub?'
     stage('Push tags') {
       withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'integrations-github-api',
                         usernameVariable: 'GITHUB_API_USERNAME', passwordVariable: 'GITHUB_API_PASSWORD']]) {
         OsTools.runSafe(this,
             "git push https://${env.GITHUB_API_USERNAME}:${env.GITHUB_API_PASSWORD}@github.com/sonatype/jenkins-nexus-notifier-plugin.git ${pom.artifactId}-${version}")
+      }
+      def releasePayload = """{
+          "tag_name": "${pom.artifactId}-${version}",
+          "name": "${pom.artifactId}-${version}",
+          "body": "Release ${pom.artifactId}-${version}"
+      }"""
+      def releaseResponse = httpRequest acceptType: 'APPLICATION_JSON',
+          authentication: 'integrations-github-api',
+          contentType: 'APPLICATION_JSON',
+          httpMode: 'POST',
+          requestBody: releasePayload,
+          url: 'https://api.github.com/repos/sonatype/jenkins-nexus-notifier-plugin/releases'
+      def releaseResponseContents = readJSON text: releaseResponse.content
+      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'integrations-github-api',
+                        usernameVariable: 'GITHUB_API_USERNAME', passwordVariable: 'GITHUB_API_PASSWORD']]) {
+        OsTools.runSafe(this, """
+          curl --header "Content-Type:application/octet-stream" \\
+            --data-binary @${WORKSPACE}/target/${pom.artifactId}.hpi \\
+            --user ${env.GITHUB_API_USERNAME}:${env.GITHUB_API_PASSWORD} \\
+            https://uploads.github.com/repos/sonatype/jenkins-nexus-notifier-plugin/releases/${releaseResponseContents.id}/assets?name=${pom.artifactId}-${version}.hpi
+        """)
       }
 
       // Reset all changes to local repository made by the Maven release plugin
