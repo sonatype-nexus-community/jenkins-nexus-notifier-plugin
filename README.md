@@ -17,6 +17,11 @@
 A Jenkins plugin to consume results of the [Nexus Platform Plugin](https://plugins.jenkins.io/nexus-jenkins-plugin) and
 publish them to various services. 
 
+## Notifiers
+
+### Bitbucket Server Code Insights
+
+A notifier for Code Insights, a feature of Bitbucket Server EAP.
 
 ## Plugin Usage
 
