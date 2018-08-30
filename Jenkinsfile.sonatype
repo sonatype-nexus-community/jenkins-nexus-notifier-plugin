@@ -139,7 +139,7 @@ if (!params.isRelease) {
           curl --header "Content-Type:application/octet-stream" \\
             --data-binary @${WORKSPACE}/target/${pom.artifactId}.hpi \\
             --user ${env.GITHUB_API_USERNAME}:${env.GITHUB_API_PASSWORD} \\
-            ${releaseResponseContents.upload_url}/repos/sonatype/jenkins-nexus-notifier-plugin/releases/${releaseResponseContents.id}/assets?name=${pom.artifactId}-${version}.hpi
+            ${releaseResponseContents.upload_url}name=${pom.artifactId}-${version}.hpi
         """)
       }
 
