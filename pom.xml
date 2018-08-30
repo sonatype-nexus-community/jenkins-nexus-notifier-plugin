@@ -12,20 +12,19 @@
     See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>3.2</version>
-    <relativePath/>
+    <relativePath />
   </parent>
 
   <groupId>org.sonatype.nexus.ci.jenkins</groupId>
   <artifactId>nexus-notifier</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.20180830-140923.e97e335</version>
   <packaging>hpi</packaging>
 
   <name>Nexus Notifier Plugin</name>
@@ -41,6 +40,7 @@
     <connection>scm:git:ssh://github.com/sonatype/jenkins-nexus-notifier-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/sonatype/jenkins-nexus-notifier-plugin.git</developerConnection>
     <url>https://github.com/sonatype/jenkins-nexus-notifier-plugin</url>
+    <tag>nexus-notifier-1.0.20180830-140923.e97e335</tag>
   </scm>
 
   <developers>
