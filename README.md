@@ -21,7 +21,12 @@ publish them to various services.
 
 ### Bitbucket Server Code Insights
 
-A notifier for Code Insights, a feature of Bitbucket Server EAP.
+A notifier for Code Insights, a feature of Bitbucket Server EAP. Nexus Notifier for Code Insights allows
+policy evaluation information to show up in Bitbucket Server EAP alongside code and Pull Requests. Use Nexus Lifecycle
+policy evaluations to determine whether new code should be merged to master. More information can be seen in the video
+below.
+
+[![Nexus Notifier for Bitbucket Server](https://img.youtube.com/vi/-_sSmoq_6ow/0.jpg)](https://www.youtube.com/watch?v=-_sSmoq_6ow)
 
 ## Plugin Usage
 
